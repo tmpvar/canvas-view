@@ -1,0 +1,24 @@
+{
+  "name": "canvas-view",
+  "version": "0.1.0",
+  "description": "",
+  "main": "canvas-view.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tmpvar/canvas-view.git"
+  },
+  "author": "Elijah Insua <tmpvar@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tmpvar/canvas-view/issues"
+  },
+  "devDependencies": {
+    "mocha": "1.x",
+    "istanbul": "*"
+  },
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha test/test.js -R spec",
+    "cover": "istanbul cover _mocha -- test/test.js -R spec",
+    "minify": "browserify -e canvas-view.js | uglifyjs > canvas-view.js.min.js"
+  }
+}
