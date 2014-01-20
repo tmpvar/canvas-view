@@ -1,0 +1,68 @@
+<html>
+<head>
+  <title>canvas-view demo</title>
+  <script type="text/javascript" src="../canvas-view.js"></script>
+  <script type="text/javascript" src="../node_modules/fc/fc.js"></script>
+  <script type="text/javascript" src="../node_modules/vec2/vec2.js"></script>
+</head>
+<body>
+
+<script class="text/javascript">
+  var view = canvasView('#223', function(ctx, deltaTime) {
+
+    ctx.save();
+      ctx.fillStyle = "yellow";
+      ctx.fillRect(-20, -20, 19, 19);
+
+      ctx.fillStyle = "green";
+      ctx.fillRect(-20, 1, 19, 19);
+
+      ctx.fillStyle = "blue";
+      ctx.fillRect(1, 1, 19, 19);
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(1, -20, 19, 19);
+
+
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+        ctx.arc(0,0,1, Math.PI*2, false)
+        ctx.fill();
+    ctx.restore();
+  });
+
+  var shift = false;
+  window.addEventListener('keydown', function(e) {
+    shift = e.shiftKey;
+  console.log(e.shiftKey)
+  });
+  window.addEventListener('keyup', function(e) {
+    shift = e.shiftKey;
+  console.log(e.shiftKey)
+
+  });
+
+  var scroller = function(e) {
+    e.preventDefault();
+
+    if (shift) {
+      console.log('scroll!');
+      view.zoom(Vec2(e), e.wheelDeltaY/2000);
+    } else {
+      view.nudge(Vec2(e.wheelDeltaX, e.wheelDeltaY).divide(10));
+    }
+  };
+
+  view.translate(view.center());
+
+  view.canvas.addEventListener('mousewheel', scroller);
+  view.canvas.addEventListener('DOMMouseScroll', scroller);
+  view.canvas.addEventListener('scroll', scroller);
+
+  view.canvas.addEventListener('touchstart', function() {
+    console.log('here');
+  });
+
+</script>
+</body>
+</html>
