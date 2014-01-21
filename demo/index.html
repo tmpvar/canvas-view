@@ -11,18 +11,27 @@
   var view = canvasView('#223', function(ctx, deltaTime) {
 
     ctx.save();
+      ctx.lineWidth = .5;
+      ctx.strokeStyle = "#444";
       ctx.fillStyle = "yellow";
       ctx.fillRect(-20, -20, 19, 19);
+      ctx.rect(-20, -20, 19, 19);
+      ctx.stroke();
 
       ctx.fillStyle = "green";
       ctx.fillRect(-20, 1, 19, 19);
+      ctx.rect(-20, 1, 19, 19);
+      ctx.stroke();
 
       ctx.fillStyle = "blue";
       ctx.fillRect(1, 1, 19, 19);
+      ctx.rect(1, 1, 19, 19);
+      ctx.stroke();
 
       ctx.fillStyle = "red";
       ctx.fillRect(1, -20, 19, 19);
-
+      ctx.rect(1, -20, 19, 19);
+      ctx.stroke();
 
       ctx.fillStyle = 'white';
       ctx.beginPath();
@@ -31,26 +40,19 @@
     ctx.restore();
   });
 
+  view.ctx.stop();
+
   var shift = false;
   window.addEventListener('keydown', function(e) {
     shift = e.shiftKey;
-  console.log(e.shiftKey)
   });
   window.addEventListener('keyup', function(e) {
     shift = e.shiftKey;
-  console.log(e.shiftKey)
-
   });
 
-  var scroller = function(e) {
-    e.preventDefault();
-
-    if (shift) {
-      console.log('scroll!');
-      view.zoom(Vec2(e), e.wheelDeltaY/2000);
-    } else {
-      view.nudge(Vec2(e.wheelDeltaX, e.wheelDeltaY).divide(10));
-    }
+  var scroller = function(e, ignoreShift) {
+    e.preventDefault && e.preventDefault();
+    view.zoom(Vec2(e), (e.wheelDeltaY || e.wheelDeltaX)/1000);
   };
 
   view.translate(view.center());
@@ -58,6 +60,33 @@
   view.canvas.addEventListener('mousewheel', scroller);
   view.canvas.addEventListener('DOMMouseScroll', scroller);
   view.canvas.addEventListener('scroll', scroller);
+  view.canvas.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+
+
+  var mouse = { pos: Vec2(0, 0)};
+
+  view.canvas.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    mouse[e.which] = true;
+  })
+
+  view.canvas.addEventListener('mousemove', function(e) {
+    var pos = new Vec2(e);
+    // TODO: if something is clicked don't use mouse[1]
+    if (mouse[2] || mouse[1]) {
+      var delta = mouse.pos.subtract(pos, true).negate();
+      view.nudge(delta);
+    }
+
+    mouse.pos.set(pos);
+  });
+
+  view.canvas.addEventListener('mouseup', function(e) {
+    mouse[e.which] = false;
+
+  });
 
   view.canvas.addEventListener('touchstart', function() {
     console.log('here');

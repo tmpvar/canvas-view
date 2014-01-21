@@ -7,24 +7,49 @@ if (typeof require !== 'undefined') {
 
 
 function CanvasView(ctx, canvas) {
+  var that = this;
   this.ctx = ctx;
   this.canvas = canvas;
+  this.scaleMin = Vec2(.5, .5);
+  this.scaleMax = Vec2(100, 100);
 
   // TODO: migrate this into fc
 
   this.canvas.width = window.innerWidth;
   this.canvas.height = window.innerHeight;
 
-  this._scale = Vec2(1, 1);
-  this._translation = Vec2(0, 0);
+  var scale = this._scale = Vec2(1, 1);
+  var translation = this._translation = Vec2(0, 0);
   this._rotation = 0;
+
+  this._scale.change(ctx.dirty);
+  this._translation.change(ctx.dirty);
+
+  window.addEventListener('resize', function(e) {
+
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+
+    var diff  = Vec2(
+      (canvas.width - w),
+      (canvas.height - h)
+    );
+
+    translation.subtract(diff.divide(4));
+
+    ctx.dirty();
+  });
+
 }
+
+CanvasView.prototype.scaleMin = null;
+CanvasView.prototype.scaleMax = null;
 
 // set the scale
 CanvasView.prototype.zoom = function(origin, x) {
   if (x) {
     this.nudge(this._translation.subtract(origin, true).divide(this._scale).multiply(x));
-    this._scale.add(Vec2(x, x)).clamp(Vec2(.1, .1), Vec2(100, 100));
+    this._scale.add(Vec2(x, x)).clamp(this.scaleMin, this.scaleMax);
   }
 };
 
