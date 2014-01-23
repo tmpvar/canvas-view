@@ -13,11 +13,6 @@ function CanvasView(ctx, canvas) {
   this.scaleMin = Vec2(.5, .5);
   this.scaleMax = Vec2(100, 100);
 
-  // TODO: migrate this into fc
-
-  this.canvas.width = window.innerWidth;
-  this.canvas.height = window.innerHeight;
-
   var scale = this._scale = Vec2(1, 1);
   var translation = this._translation = Vec2(0, 0);
   this._rotation = 0;
